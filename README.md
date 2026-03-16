@@ -121,7 +121,7 @@ print(trustpilot_freq_dist.most_common(10))
 - ![BERTopic2](/images/bertopics2.png)
 - **BERTopic** excelled at separating semantically similar but distinct issues (e.g., "Air Conditioning" vs. general "Facilities")
 
-- - ![Gensim LDA](/images/LDAgensim.png)
+- ![Gensim LDA](/images/LDAgensim.png)
 - **LDA** surfaced a critical data quality insight: Danish stopwords in Topic 4 revealed unfiltered non-English reviews, flagging the need for multilingual preprocessing
 - Both models converged on the same core themes, validating the findings
 
