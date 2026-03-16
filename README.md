@@ -33,7 +33,60 @@ Raw Reviews (30,000+)
     └── LLM Exploration
           └── Falcon-7b-instruct → topic extraction & actionable suggestion generation
 ```
+### Sample Codes
 
+Using NLTK formost frequent words distribution and Word Cloud (Bag of Word) Pre-Processing.
+```python
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+import re
+
+# Download necessary NLTK data
+nltk.download('stopwords')
+nltk.download('punkt')
+
+# Define preprocessing function
+def preprocess_text(text):
+    if not isinstance(text, str):
+        return ""
+    # Lowercase
+    text = text.lower()
+    # Remove numbers
+    text = re.sub(r'\\d+', '', text)
+    # Tokenize
+    tokens = word_tokenize(text)
+    # Remove stopwords
+    stop_words = set(stopwords.words('english'))
+    tokens = [word for word in tokens if word.isalpha() and word not in stop_words]
+    # Join back into a string for FreqDist
+    return ' '.join(tokens)
+
+# Apply preprocessing to Google reviews
+google_df['cleaned_comment'] = google_df['Comment'].apply(preprocess_text)
+
+# Apply preprocessing to Trustpilot reviews
+trustpilot_df['cleaned_review_content'] = trustpilot_df['Review Content'].apply(preprocess_text)
+
+print("Text preprocessing complete. New 'cleaned_comment' and 'cleaned_review_content' columns created.")
+
+from nltk.probability import FreqDist
+
+# Get all words from Google reviews
+google_words = ' '.join(google_df['cleaned_comment']).split()
+google_freq_dist = FreqDist(google_words)
+
+# Get all words from Trustpilot reviews
+trustpilot_words = ' '.join(trustpilot_df['cleaned_review_content']).split()
+trustpilot_freq_dist = FreqDist(trustpilot_words)
+
+print("Frequency distribution for Google reviews (top 10):")
+print(google_freq_dist.most_common(10))
+
+print("\nFrequency distribution for Trustpilot reviews (top 10):")
+print(trustpilot_freq_dist.most_common(10))
+
+```
 ### Key Technical Highlights
 
 | Technique | Tool / Model | Purpose |
@@ -64,7 +117,11 @@ Raw Reviews (30,000+)
 - High footfall ≠ high negativity — specific failing locations drive the negative metrics, not volume
 
 ### Model Comparison: BERTopic vs. LDA
+- ![BERTopic](/images/bertopics.png)
+- ![BERTopic2](/images/bertopics2.png)
 - **BERTopic** excelled at separating semantically similar but distinct issues (e.g., "Air Conditioning" vs. general "Facilities")
+
+- - ![Gensim LDA](/images/LDAgensim.png)
 - **LDA** surfaced a critical data quality insight: Danish stopwords in Topic 4 revealed unfiltered non-English reviews, flagging the need for multilingual preprocessing
 - Both models converged on the same core themes, validating the findings
 
